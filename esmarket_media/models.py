@@ -64,7 +64,8 @@ class ModelMixin:
 
 
 class Player(base, ModelMixin):
-    name = Column(String(length=225))
+    twitch_name = Column(String(length=225))
+    instagram_name = Column(String(length=225))
     twitch_followers_count = Column(Integer, default=0)
     instagram_followers_count = Column(Integer, default=0)
 

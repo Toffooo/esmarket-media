@@ -24,7 +24,7 @@ def get_users(users: tp.Union[_USER, tp.List[Player]]) -> Users:
     :return: User instance
     """
     if any(True for user in users if isinstance(user, Player)):
-        users = [user.name for user in users]
+        users = [user.twitch_name for user in users]
 
     return helix.users(users)
 
@@ -45,7 +45,7 @@ def get_followers_count(users: tp.Union[_USER, tp.List[Player]]) -> tp.Dict[str,
     :return: Dict with info about followers count
     """
     if any(True for user in users if isinstance(user, Player)):
-        users = [user.name for user in users]
+        users = [user.twitch_name for user in users]
 
     _users = get_users(users)
     return {user.display_name: user.followers().total for user in _users}

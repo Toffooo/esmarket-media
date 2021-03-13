@@ -27,3 +27,16 @@ inv makemigartions some_message
 ```shell
 inv migrate
 ```
+
+## Usage
+* **Scrape players**
+```python
+from esmarket_media import ESMarketPlayers
+
+
+players = ESMarketPlayers()
+players.get(pages=1)  # set the count of web pages which should be scraped
+
+print(players.scraped)  # Get scraped players as dict
+print(players.serialize())  # Get serialized players
+```

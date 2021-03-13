@@ -1,72 +1,45 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+from sqlalchemy_mixins import AllFeaturesMixin, TimestampsMixin
 
-from esmarket_media.database import base, session
-from esmarket_media.exceptions import TooManyArgumentsProvided
-
-local_session = session()
-
-
-class ModelMixin:
-    @classmethod
-    def all(cls):
-        return local_session.query(cls).all()
-
-    @classmethod
-    def get(cls, **kwargs):
-        if len(kwargs.keys()) > 1:
-            raise TooManyArgumentsProvided(
-                "Too many arguments provided to `get` method."
-            )
-
-        data = (
-            local_session.query(cls)
-            .filter(*[getattr(cls, key) == value for key, value in kwargs.items()])
-            .limit(1)
-            .one()
-        )
-        return data
-
-    @classmethod
-    def filter(cls, **kwargs):
-        data = (
-            local_session.query(cls)
-            .filter(*[getattr(cls, key) == value for key, value in kwargs.items()])
-            .limit(1)
-            .one()
-        )
-        return data
-
-    @classmethod
-    def create(cls, **kwargs):
-        instance = cls(**kwargs)  # noqa
-        local_session.add(instance)
-        local_session.commit()
-        return instance
-
-    def save(self):
-        local_session.add(self)
-        local_session.commit()
-        return self
-
-    def delete(self):
-        local_session.delete(self)
-        local_session.commit()
-        return self
-
-    def __repr__(self):
-        columns = list(self.__table__.columns)  # noqa
-        return "<{model_name}({expression})>".format(
-            model_name=self.__class__.__name__.capitalize(),  # noqa
-            expression=", ".join(
-                [f"{column.name}={getattr(self, column.name)}" for column in columns]
-            ),
-        )
+from esmarket_media.database import JsonType, ListType, base, engine, session
 
 
-class Player(base, ModelMixin):
-    name = Column(String(length=225))
-    twitch_followers_count = Column(Integer, default=0)
-    instagram_followers_count = Column(Integer, default=0)
+class AbstractModel(base, AllFeaturesMixin, TimestampsMixin):
+    __abstract__ = True
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        pass
+
+
+class Player(AbstractModel):
+    __tablename__ = "players"
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    ggscore_name = Column(String(length=225))
+    strength = Column(Integer, default=0)
+    alternative_names = Column(ListType, default=[])
+    form = Column(Integer, default=0)
+    earned = Column(Integer, default=0)
+    twitch_meta = Column(JsonType, default={})
+    instagram_meta = Column(JsonType, default={})
+    rating = Column(Integer, default=0)
+
+    teams_history = relationship("TeamHistory", back_populates="player")
+
+
+class TeamHistory(AbstractModel):
+    __tablename__ = "team_histories"
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    player_id = Column(Integer, ForeignKey("players.id"))
+    team_name = Column(String(length=255))
+    matches = Column(Integer, default=0)
+    start_date = Column(Integer, default=0)
+    end_date = Column(Integer, default=0)
+
+    player = relationship("Player", back_populates="teams_history")
+
+
+base.metadata.create_all(engine)
+AbstractModel.set_session(session)

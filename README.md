@@ -10,6 +10,17 @@ pip install -r requirements.txt
 cp ./.env.example ./.env
 ```
 
+## Run
+* **Create celery workers**
+```shell
+celery -A feed.tasks worker --loglevel=info
+```
+* **Run tasks from cli**
+```shell
+python celery_run.py --wtf=players  # Update players
+python celery_run.py --wtf=twitch  # Update players twitch meta
+```
+
 ## For developers
 * **Format code to PEP standards**
 ```shell

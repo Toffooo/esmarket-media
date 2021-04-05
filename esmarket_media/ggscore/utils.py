@@ -1,9 +1,10 @@
 import re
 from typing import List, Optional
 
-from esmarket_media.ggscore.resources import urls
 from esmarket_media.models import Player
 from settings import GGSCORE_BASE_LINK
+
+from .resources import urls
 
 
 def union_lists(value: list):
@@ -34,6 +35,14 @@ class WebPlayer:
         if "/" in names:
             names = names.split("/")[0].strip()
             names = [name.strip() for name in names.split(",")]
+
+        if isinstance(names, str) and "," in names:
+            names = [name.strip() for name in names.split(",")]
+
+        for idx, name in enumerate(names):
+            if "," in name:
+                del names[idx]
+                names += name.split(",")
 
         return [names.strip()] if isinstance(names, str) else names
 

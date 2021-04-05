@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 import requests
 from bs4 import BeautifulSoup as bs
 
-from esmarket_media.ggscore.utils import WebPlayer
+from .utils import WebPlayer
 
 
 class ESMarket(ABC):

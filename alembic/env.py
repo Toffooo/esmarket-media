@@ -1,13 +1,12 @@
+import sys
 from logging.config import fileConfig
 
-import sys
 sys.path.append("../esmarket-media")
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from esmarket_media.models import base
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from esmarket_media.models import base
 from settings import DATABASE_URL
 
 # this is the Alembic Config object, which provides
@@ -69,9 +68,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

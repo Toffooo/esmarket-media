@@ -1,9 +1,8 @@
-import invoke
-
 from pathlib import Path
 
+import invoke
 
-PACKAGE = "esmarket_media"
+PACKAGE = "esmarket_media feed"
 REQUIRED_COVERAGE = 90
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -43,7 +42,11 @@ def test(arg):
 
 @invoke.task
 def makemigrations(arg, message):
-    arg.run(f"cd {BASE_DIR} && alembic revision --autogenerate -m '{message}'", echo=True, pty=True)
+    arg.run(
+        f"cd {BASE_DIR} && alembic revision --autogenerate -m '{message}'",
+        echo=True,
+        pty=True,
+    )
 
 
 @invoke.task

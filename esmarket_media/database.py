@@ -19,7 +19,7 @@ class Base:
 
 
 pymysql.install_as_MySQLdb()
-engine: sqlalchemy.engine.base.Engine = create_engine(DATABASE_URL, pool_recycle=3600)
+engine: sqlalchemy.engine.base.Engine = create_engine(DATABASE_URL, pool_recycle=1800)
 session_factory: sqlalchemy.orm.session.sessionmaker = sessionmaker(
     bind=engine, autocommit=True
 )
